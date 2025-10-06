@@ -1,0 +1,39 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+
+development:
+  <<: *default
+  database: api_sample_project
+  host: localhost
+  user: postgres
+  password: postgres
+
+test:
+  <<: *default
+  host: localhost
+  user: postgres
+  password: postgres
+  database: api_sample_project_test
+
+production:
+  primary: &primary_production
+    <<: *default
+    database: api_sample_project_production
+    username: api_sample_project
+    password: <%= ENV["API_SAMPLE_PROJECT_DATABASE_PASSWORD"] %>
+  cache:
+    <<: *primary_production
+    database: api_sample_project_production_cache
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: api_sample_project_production_queue
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *primary_production
+    database: api_sample_project_production_cable
+    migrations_paths: db/cable_migrate
