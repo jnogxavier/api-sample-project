@@ -7,7 +7,7 @@ module Api
         title: post_params[:title],
         body: post_params[:body],
         login: post_params[:login],
-        ip_address: request.remote_ip
+        ip_address: client_ip
       ).call
 
       if service.success?
@@ -26,6 +26,10 @@ module Api
 
     def post_params
       params.require(:post).permit(:title, :body, :login)
+    end
+
+    def client_ip
+      request.headers["X-Forwarded-For"] || request.remote_ip
     end
   end
 end
