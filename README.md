@@ -1,24 +1,44 @@
-# README
+# Posts API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails API for posts, users and ratings.
 
-Things you may want to cover:
+## Setup
 
-* Ruby version
+```bash
+bundle install
+rails db:create db:migrate
+rails server
+```
 
-* System dependencies
+## Endpoints
 
-* Configuration
+**POST /api/posts**
+```bash
+curl -X POST http://localhost:3000/api/posts \
+  -H "Content-Type: application/json" \
+  -d '{"post": {"title": "Title", "body": "Content", "login": "username"}}'
+```
 
-* Database creation
+**POST /api/ratings**
+```bash
+curl -X POST http://localhost:3000/api/ratings \
+  -H "Content-Type: application/json" \
+  -d '{"rating": {"post_id": 1, "user_id": 2, "value": 5}}'
+```
 
-* Database initialization
+**GET /api/posts/top?limit=10**
 
-* How to run the test suite
+**GET /api/ips/shared_authors**
 
-* Services (job queues, cache servers, search engines, etc.)
+## Tests
 
-* Deployment instructions
+```bash
+bundle exec rspec
+```
 
-* ...
+## Seeds
+
+Start server first, then:
+```bash
+rails db:seed
+```
