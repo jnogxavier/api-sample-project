@@ -5,10 +5,32 @@ Rails API for posts, users and ratings.
 ## Setup
 
 ```bash
-bundle install
-rails db:create db:migrate
-rails server
+docker compose up
+bin/setup
 ```
+
+## Server
+
+```bash
+docker compose up
+bin/dev
+```
+
+## Seeds
+
+Start server first, then:
+```bash
+rails db:seed
+```
+... Or run it on your first setup with bin/setup
+
+## Tests
+
+```bash
+bundle exec rspec
+bundle exec rubocop
+```
+
 
 ## Endpoints
 
@@ -30,15 +52,3 @@ curl -X POST http://localhost:3000/api/ratings \
 
 **GET /api/ips/shared_authors**
 
-## Tests
-
-```bash
-bundle exec rspec
-```
-
-## Seeds
-
-Start server first, then:
-```bash
-rails db:seed
-```
