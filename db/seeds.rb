@@ -3,8 +3,9 @@ require "net/http"
 require "uri"
 
 puts "Seeding database..."
+puts "\nThe process may look stuck!"
 
-BASE_URL = "http://localhost:3000"
+BASE_URL = ENV.fetch("URL_BASE", "http://localhost:3000")
 USERS = 100.times.map { |i| "user_#{i.to_s.rjust(3, '0')}" }
 IPS = 50.times.map { |i| "192.168.#{i / 256}.#{i % 256}" }
 THREAD_POOL_SIZE = 20

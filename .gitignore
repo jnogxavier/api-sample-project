@@ -19,3 +19,4 @@
 !/tmp/storage/.keep
 
 /config/master.key
+/config/database.yml
