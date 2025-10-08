@@ -8,6 +8,7 @@ RSpec.describe User, type: :model do
 
   it "validates login uniqueness" do
     User.create!(login: "test")
-    expect(User.new(login: "test")).not_to be_valid
+    duplicate_user = User.new(login: "test")
+    expect { duplicate_user.save!(validate: false) }.to raise_error(ActiveRecord::RecordNotUnique)
   end
 end

@@ -14,6 +14,7 @@ RSpec.describe Rating, type: :model do
 
   it "prevents duplicate user ratings" do
     Rating.create!(post: post, user: rater, value: 5)
-    expect(Rating.new(post: post, user: rater, value: 4)).not_to be_valid
+    duplicate_rating = Rating.new(post: post, user: rater, value: 4)
+    expect { duplicate_rating.save!(validate: false) }.to raise_error(ActiveRecord::RecordNotUnique)
   end
 end

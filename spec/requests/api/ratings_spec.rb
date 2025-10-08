@@ -35,6 +35,8 @@ RSpec.describe "Api::Ratings", type: :request do
       }.not_to change(Rating, :count)
 
       expect(response).to have_http_status(:unprocessable_entity)
+      json = JSON.parse(response.body)
+      expect(json["errors"]).to include("User has already rated this post")
     end
 
     it "validates value range" do
