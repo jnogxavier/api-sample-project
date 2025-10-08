@@ -3,9 +3,26 @@ require "net/http"
 require "uri"
 
 puts "Seeding database..."
-puts "\nThe process may look stuck!"
 
 BASE_URL = ENV.fetch("URL_BASE", "http://localhost:3000")
+
+begin
+  uri = URI("#{BASE_URL}/up") # Standard Rails health check endpoint
+  response = Net::HTTP.get_response(uri)
+  # Raise an error if the server response is not a 2xx success code
+  raise "Server not ready (responded with #{response.code})" unless response.is_a?(Net::HTTPSuccess)
+  puts "✅ Server connection successful."
+rescue Errno::ECONNREFUSED
+  puts "\nERROR: Could not connect to the Rails server at #{BASE_URL}."
+  puts "   Please start your server in another terminal (e.g., with 'bin/dev') before running db:seed."
+  exit 1 # Exit the script with an error code
+rescue StandardError => e
+  puts "\nERROR: The server responded unexpectedly. Details: #{e.message}"
+  exit 1
+end
+
+puts "\nThe process may look stuck!"
+
 USERS = 100.times.map { |i| "user_#{i.to_s.rjust(3, '0')}" }
 IPS = 50.times.map { |i| "192.168.#{i / 256}.#{i % 256}" }
 THREAD_POOL_SIZE = 20
