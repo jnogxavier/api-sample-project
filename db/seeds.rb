@@ -7,15 +7,14 @@ puts "Seeding database..."
 BASE_URL = ENV.fetch("URL_BASE", "http://localhost:3000")
 
 begin
-  uri = URI("#{BASE_URL}/up") # Standard Rails health check endpoint
+  uri = URI("#{BASE_URL}/up")
   response = Net::HTTP.get_response(uri)
-  # Raise an error if the server response is not a 2xx success code
   raise "Server not ready (responded with #{response.code})" unless response.is_a?(Net::HTTPSuccess)
   puts "✅ Server connection successful."
 rescue Errno::ECONNREFUSED
   puts "\nERROR: Could not connect to the Rails server at #{BASE_URL}."
   puts "   Please start your server in another terminal (e.g., with 'bin/dev') before running db:seed."
-  exit 1 # Exit the script with an error code
+  exit 1
 rescue StandardError => e
   puts "\nERROR: The server responded unexpectedly. Details: #{e.message}"
   exit 1
