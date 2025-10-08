@@ -43,6 +43,14 @@ RSpec.describe "Api::Posts", type: :request do
       json = JSON.parse(response.body)
       expect(json["errors"]).to be_present
     end
+
+    it "uses X-Forwarded-For header when present" do
+      post "/api/posts", params: params, as: :json, headers: { "X-Forwarded-For" => "203.0.113.195" }
+
+      expect(response).to have_http_status(:created)
+      json = JSON.parse(response.body)
+      expect(json["post"]["ip"]).to eq("203.0.113.195")
+    end
   end
 
   describe "GET /api/posts/top" do
@@ -80,6 +88,36 @@ RSpec.describe "Api::Posts", type: :request do
       end
 
       get "/api/posts/top"
+      expect(JSON.parse(response.body).length).to eq(10)
+    end
+
+    it "excludes posts without ratings" do
+      Post.create!(title: "Post without rating", body: "Body", ip: "1.1.1.4", user: user1)
+
+      get "/api/posts/top", params: { limit: 10 }
+      json = JSON.parse(response.body)
+
+      expect(json.length).to eq(3)
+      expect(json.map { |p| p["title"] }).not_to include("Post without rating")
+    end
+
+    it "uses default limit when limit is zero" do
+      15.times do |i|
+        p = Post.create!(title: "Post #{i}", body: "Body #{i}", ip: "1.1.1.#{i}", user: user1)
+        Rating.create!(post: p, user: user2, value: 3)
+      end
+
+      get "/api/posts/top", params: { limit: 0 }
+      expect(JSON.parse(response.body).length).to eq(10)
+    end
+
+    it "uses default limit when limit is negative" do
+      15.times do |i|
+        p = Post.create!(title: "Post #{i}", body: "Body #{i}", ip: "1.1.1.#{i}", user: user1)
+        Rating.create!(post: p, user: user2, value: 3)
+      end
+
+      get "/api/posts/top", params: { limit: -5 }
       expect(JSON.parse(response.body).length).to eq(10)
     end
   end
